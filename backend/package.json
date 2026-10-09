@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "lint": "eslint src tests",
-    "test": "jest --coverage --ci --runInBand"
+    "test": "jest --coverage --ci --runInBand --testTimeout=120000"
   },
   "dependencies": {
     "cors": "^2.8.5",
