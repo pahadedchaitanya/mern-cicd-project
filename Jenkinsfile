@@ -70,12 +70,13 @@ pipeline {
         choice(
             name: 'DEPLOY_STRATEGY',
             choices: [
+                'none',
                 'bluegreen',
-                'canary',
-                'none'
+                'canary'
             ],
-            description: 'How to release on main. "none" = CI only (build, test, push).'
+            description: 'Select none for CI only (no AWS push or deployment).'
         )
+
 
         booleanParam(
             name: 'REQUIRE_APPROVAL',
@@ -626,11 +627,15 @@ pipeline {
         // ====================================================================
 
         stage('Push to ECR') {
-
             when {
-
-                branch 'main'
+                allOf {
+                    branch 'main'
+                    expression {
+                        params.DEPLOY_STRATEGY != 'none'
+                    }
+                }
             }
+
 
             steps {
 
