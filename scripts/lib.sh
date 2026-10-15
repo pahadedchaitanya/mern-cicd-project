@@ -25,7 +25,16 @@ other_color() { if [ "$1" = blue ]; then echo green; else echo blue; fi; }
 alb_arn()  { aws elbv2 describe-load-balancers --names "${PROJECT}-alb" --query 'LoadBalancers[0].LoadBalancerArn' --output text; }
 alb_dns()  { aws elbv2 describe-load-balancers --names "${PROJECT}-alb" --query 'LoadBalancers[0].DNSName' --output text; }
 listener_arn() { aws elbv2 describe-listeners --load-balancer-arn "$(alb_arn)" --query 'Listeners[?Port==`80`].ListenerArn | [0]' --output text; }
-backend_rule_arn() { aws elbv2 describe-rules --listener-arn "$(listener_arn)" --query 'Rules[?Priority==`10`].RuleArn | [0]' --output text; }
+# backend_rule_arn() { aws elbv2 describe-rules --listener-arn "$(listener_arn)" --query 'Rules[?Priority==`10`].RuleArn | [0]' --output text; }
+backend_rule_arn() {
+  local arn
+  arn=$(aws elbv2 describe-rules --listener-arn "$(listener_arn)" --query "Rules[?Priority=='10'].RuleArn | [0]" --output text)
+  if [ -z "$arn" ] || [ "$arn" = "None" ]; then
+    echo "ERROR: backend listener rule (priority 10) not found" >&2
+    return 1
+  fi
+  echo "$arn"
+}
 tg_arn() { aws elbv2 describe-target-groups --names "${PROJECT}-$1-$2" --query 'TargetGroups[0].TargetGroupArn' --output text; }  # component color
 
 forward_json() {  # blue_arn green_arn blue_weight green_weight

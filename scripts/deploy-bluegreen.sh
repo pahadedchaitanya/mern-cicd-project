@@ -19,7 +19,7 @@ log "Cutting over to $IDLE"
 set_color_pct "$IDLE" 100
 sleep 10
 
-if ! "$SCRIPT_DIR/smoke-test.sh" "$ALB_URL" "$TAG"; then
+if ! bash "$SCRIPT_DIR/smoke-test.sh" "$ALB_URL" "$TAG"; then
   log "Smoke test failed - rolling back to $ACTIVE"
   set_color_pct "$ACTIVE" 100
   scale_color "$IDLE" 0
