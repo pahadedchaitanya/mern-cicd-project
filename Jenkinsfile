@@ -628,12 +628,7 @@ pipeline {
 
         stage('Push to ECR') {
             when {
-                allOf {
-                    branch 'main'
-                    expression {
-                        params.DEPLOY_STRATEGY != 'none'
-                    }
-                }
+                branch 'main'
             }
 
 
