@@ -661,11 +661,11 @@ pipeline {
                             for c in backend frontend; do
 
                                 docker tag \
-                                  ${env.PROJECT}-\\\$c:${env.IMAGE_TAG} \
-                                  ${env.ECR_REGISTRY}/${env.PROJECT}-\\\$c:${env.IMAGE_TAG}
+                                  ${env.PROJECT}-\$c:${env.IMAGE_TAG} \
+                                  ${env.ECR_REGISTRY}/${env.PROJECT}-\$c:${env.IMAGE_TAG}
 
                                 docker push \
-                                  ${env.ECR_REGISTRY}/${env.PROJECT}-\\\$c:${env.IMAGE_TAG}
+                                  ${env.ECR_REGISTRY}/${env.PROJECT}-\$c:${env.IMAGE_TAG}
 
                             done
                         """
