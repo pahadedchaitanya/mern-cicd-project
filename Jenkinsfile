@@ -79,8 +79,8 @@ pipeline {
     parameters {
         choice(
             name: 'DEPLOY_STRATEGY',
-            choices: ['bluegreen', 'canary', 'none'],
-            description: 'How to release on main. "none" = CI only (build, test, push).'
+            choices: ['none', 'bluegreen', 'canary'],
+            description: 'Select none for CI only (build, test, and push images to ECR; no AWS deployment).'
         )
 
         booleanParam(
