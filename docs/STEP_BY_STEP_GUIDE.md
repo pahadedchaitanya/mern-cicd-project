@@ -487,6 +487,7 @@ aws logs tail /ecs/mern-cicd/backend --follow
 | `docker: command not found` / permission denied on the socket | You are not using `jenkins/Dockerfile`, or the socket is not mounted |
 | Trivy exits 1 | A CRITICAL fixable CVE - bump the base image/dependency, or consciously add `.trivyignore` |
 | `AccessDenied` from aws | Jenkins key missing a permission - compare with `aws_iam_policy.jenkins_deploy` |
+| ECR `repository does not exist` | Jenkins and Terraform must use the same AWS account, region, and `project`; apply Terraform there to create the ECR repositories |
 | ECR `tag invalid: immutable` | You re-pushed an existing tag. Tags include the build number; do not reuse a workspace's `IMAGE_TAG` |
 | ECS service never stable | `aws ecs describe-services ... --query 'services[0].events[:5]'`; usually the container exits - read `/ecs/mern-cicd/backend` logs |
 | Targets `unhealthy`, API logs `MongoDB connection error` | Atlas Network Access does not include the NAT IP, or wrong `mongodb_uri` (re-apply Terraform with the corrected value and start a new deployment so tasks re-read the parameter) |

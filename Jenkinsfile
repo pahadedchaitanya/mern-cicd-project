@@ -109,7 +109,7 @@ pipeline {
     }
 
     environment {
-        AWS_REGION = 'ap-south-2'
+        AWS_REGION = 'ap-south-1'
         PROJECT    = 'mern-cicd'
         CI         = 'true'
 
