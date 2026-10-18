@@ -112,6 +112,12 @@ docker compose up --build
 
 * App: <http://localhost:8085> - add, complete and delete tasks.
 * API health: <http://localhost:5006/api/health>
+* Jenkins: <http://localhost:8082>
+* SonarQube: <http://localhost:9000>
+
+The default Compose stack starts the app, Jenkins, SonarQube, and both databases. Jenkins and
+SonarQube may take a few minutes to finish initializing; check their logs with
+`docker compose logs -f jenkins sonarqube`.
 
 The header on the page shows **"API build"**. Locally it says `local`; in AWS it shows the
 Jenkins image tag (`<build number>-<git sha>`). You will use it to *see* a blue-green or canary
@@ -168,8 +174,8 @@ npm test
 ### 5.1 Start them
 
 ```bash
-docker compose -f docker-compose.jenkins.yml up -d --build
-docker compose -f docker-compose.jenkins.yml logs -f jenkins     # wait for the admin password
+docker compose up -d --build jenkins sonarqube
+docker compose logs -f jenkins     # wait for the admin password
 ```
 
 * Jenkins → <http://localhost:8082>
@@ -184,7 +190,7 @@ curl and Trivy**, and the plugins from `jenkins/plugins.txt`.
 ### 5.2 First-time Jenkins setup
 
 1. Open Jenkins, paste the initial admin password
-   (`docker compose -f docker-compose.jenkins.yml exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`).
+   (`docker compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`).
 2. Choose **Select plugins to install → None** (our plugins are already installed), create your admin user.
 3. Confirm the URL (`http://localhost:8082/`).
 
@@ -207,7 +213,7 @@ Node.js 22, npm, docker, aws, jq and trivy are already inside the Jenkins image,
    * Server authentication token: `sonar-token`
 4. **Webhook (required for the Quality Gate stage):** SonarQube → **Administration → Configuration →
    Webhooks → Create**: Name `jenkins`, URL `http://jenkins:8080/sonarqube-webhook/`.
-   Without it `waitForQualityGate` waits until its timeout. `docker-compose.jenkins.yml` already sets `sonar.validateWebhooks=false`, which SonarQube needs before it will call a private address like `jenkins:8080`.
+   Without it `waitForQualityGate` waits until its timeout. The Compose configuration sets `sonar.validateWebhooks=false`, which SonarQube needs before it will call a private address like `jenkins:8080`.
 
 ### 5.5 (Optional) Tighten the Sonar quality gate
 
@@ -534,7 +540,6 @@ cd infra/terraform && terraform destroy
 
 # local tooling
 docker compose down -v
-docker compose -f docker-compose.jenkins.yml down -v
 ```
 
 Also delete the Jenkins IAM access key (`aws iam delete-access-key`) and the Atlas cluster if you created one just for this.

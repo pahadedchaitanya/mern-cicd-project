@@ -35,8 +35,8 @@ zero-downtime **blue-green** and **canary** releases to **AWS (ECS Fargate + ALB
 │   └── smoke-test.sh
 ├── infra/terraform/             # AWS infrastructure
 ├── jenkins/                     # Jenkins image (docker, aws, trivy, plugins)
-├── docker-compose.yml           # run the app locally
-├── docker-compose.jenkins.yml   # Jenkins + SonarQube
+├── docker-compose.yml           # app + Jenkins + SonarQube local stack
+├── docker-compose.jenkins.yml   # Jenkins + SonarQube only
 ├── sonar-project.properties
 └── docs/STEP_BY_STEP_GUIDE.md
 ```
@@ -44,13 +44,16 @@ zero-downtime **blue-green** and **canary** releases to **AWS (ECS Fargate + ALB
 ## Quick start
 
 ```bash
-# 1. run the app locally  ->  http://localhost:8085
+# 1. run the app, Jenkins, and SonarQube locally
 docker compose up --build
+# App:       http://localhost:8085
+# Jenkins:   http://localhost:8082
+# SonarQube: http://localhost:9000
 
-# 2. start Jenkins + SonarQube  ->  http://localhost:8082 and http://localhost:9000
-docker compose -f docker-compose.jenkins.yml up -d --build
+# Jenkins initial admin password
+docker compose exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
-# 3. create the AWS infrastructure
+# 2. create the AWS infrastructure
 cd infra/terraform && cp terraform.tfvars.example terraform.tfvars   # edit mongodb_uri
 terraform init && terraform apply
 ```
